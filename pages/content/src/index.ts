@@ -44,16 +44,15 @@ function convertToDOMNode(
   // Convert children recursively
   if (node.children && Array.isArray(node.children)) {
     const convertedChildren = node.children
-      .map((child, index) => {
-        const childId = `${nodeId}_${index}`; // Create a unique ID for each child
-        map[childId] = child; // Add child to the map
-        const convertedChild = convertToDOMNode(childId, map, elementNode);
+      .map(childId => {
+        // Use the child ID directly from the children array
+        const convertedChild = convertToDOMNode(childId.toString(), map, elementNode);
         if (!convertedChild) {
-          console.warn('Failed to convert child:', childId);
+          return null;
         }
         return convertedChild;
       })
-      .filter((child): child is DOMElementNode | DOMTextNode => child !== null);
+      .filter(Boolean);
 
     elementNode.children = convertedChildren;
   } else {
