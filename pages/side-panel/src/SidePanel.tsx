@@ -1,5 +1,5 @@
 import '@src/SidePanel.css';
-import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
+import { withErrorBoundary, withSuspense } from '@extension/shared';
 import { useState, useEffect } from 'react';
 import { getChatResponse, addChatUpdateListener, removeChatUpdateListener } from './services/chatService';
 import type { Message } from './types';
