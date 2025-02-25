@@ -17,19 +17,29 @@
 ## Getting started
 
 ### Installation
-1. Run:
-    - Dev: `pnpm dev` (on Windows, you should run as administrator;
-      see [issue#456](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/issues/456))
-    - Prod: `pnpm build`
-2. Open in browser - `chrome://extensions`
-3. Check - <kbd>Developer mode</kbd>
-4. Click - <kbd>Load unpacked</kbd> in the upper left corner
-5. Select the `dist` directory from the project
+1. Download extension zip and unzip.
+2. Open in browser - `chrome://extensions`.
+3. Check - <kbd>Developer mode</kbd>.
+4. Click - <kbd>Load unpacked</kbd> in the upper left corner.
+5. Select the folder inside the unzipped extension.
 
 ### Configuration
+1. Open the extension popup by clicking the extension icon in the toolbar.
+2. Configure the API key, Model ID, and the base URL of the API.
+3. Click save.
+4. Open the extension side panel by right-clicking the extension icon in the toolbar, and choose open side panel.
+5. Start chatting!
 
+Please note that only **vision**-capable **OpenAI API standard**-compatible models are supported at this moment.
+
+Base URLs
+```
+OpenAI: https://api.openai.com/v1/completions
+Gemini: https://generativelanguage.googleapis.com/v1beta/openai/
+```
 
 ## Demo
+![demo-mac](https://github.com/user-attachments/assets/5d7e8fb9-515f-4fd6-ae87-6cf8008a3f35)
 
 ## Contribution
 This repo uses chrome-extension-boilerplate-react-vite as a starting point.
