@@ -4,6 +4,7 @@
  */
 
 import type { DOMNode } from './types';
+import { DOMElementNode, DOMTextNode } from './view';
 
 // Convert DOMNode to DOMElementNode/DOMTextNode
 export function convertToDOMNode(
