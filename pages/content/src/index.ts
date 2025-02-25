@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Collect page data when called by the background scripts.
  */
