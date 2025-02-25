@@ -58,14 +58,15 @@ export const actionSchemas = [
   //   }),
   //   example: '{"switch_tab": {"page_id": 1}}',
   // },
-  {
-    action_name: 'open_tab',
-    description: 'Open url in new tab',
-    schema: z.object({
-      url: z.string(),
-    }),
-    example: '{"open_tab": {"url": "https://www.google.com"}}',
-  },
+  // To be implemented
+  // {
+  //   action_name: 'open_tab',
+  //   description: 'Open url in new tab',
+  //   schema: z.object({
+  //     url: z.string(),
+  //   }),
+  //   example: '{"open_tab": {"url": "https://www.google.com"}}',
+  // },
   {
     action_name: 'scroll',
     description: 'Scroll down/up the page by pixel amount - if no amount is specified, scroll one page',

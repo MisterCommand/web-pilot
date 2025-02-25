@@ -132,6 +132,7 @@ async function getPageStructuredData(): Promise<Record<string, unknown>> {
     const xpaths = getXPaths(result);
     console.log('XPaths:', xpaths);
     return {
+      title: document.title,
       url: window.location.href,
       clickableElements,
       xpaths,
@@ -139,6 +140,7 @@ async function getPageStructuredData(): Promise<Record<string, unknown>> {
   } catch (error) {
     console.error('Error getting XPaths:', error);
     return {
+      title: document.title,
       url: window.location.href,
       clickableElements,
       xpaths: {},
@@ -188,7 +190,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
 
       if (message.type === 'REMOVE_HIGHLIGHTS') {
-        setTimeout(removeHighlights, 5000); // One second delay before hiding highlights
+        removeHighlights();
         return { success: true };
       }
 

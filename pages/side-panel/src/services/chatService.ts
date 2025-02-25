@@ -13,7 +13,7 @@ import type { ChatResponse, Message } from '../types';
 import { type ActionResponse, executeAction } from './executeActions';
 import { getAllActionDescriptions } from './actions';
 import { getSystemPrompt, getHumanPrompt, type BrowserState, getUltimateGoal } from './prompts';
-import { getPageData, removeHighlights } from './uiService';
+import { getPageData } from './uiService';
 import { sendChatCompletion } from './apiService';
 
 // Event emitter for chat updates
@@ -244,7 +244,7 @@ export async function getCurrentHumanPrompt(
     screenshot: pageData.screenshot,
   };
 
-  await removeHighlights(); // Remove highlights after capturing the screenshot
+  // await removeHighlights(); // Remove highlights after capturing the screenshot
 
   console.log('Human prompt:', getHumanPrompt(browserState, actionResults, [], stepInfo, useVision).content);
 

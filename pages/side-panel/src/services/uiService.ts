@@ -32,7 +32,7 @@ export async function getPageData(): Promise<any> {
       url: 'chrome://newtab/',
       screenshot: undefined,
       clickableElements: [],
-      tabs: await getTabsInfo(),
+      tabs: [],
       scrollInfo: {
         pixelsAbove: 0,
         pixelsBelow: 0,
@@ -64,7 +64,8 @@ export async function getPageData(): Promise<any> {
         url: response.url || '',
         screenshot,
         clickableElements: response.clickableElements,
-        tabs: await getTabsInfo(),
+        // tabs: await getTabsInfo(),
+        tabs: [], // To be implemented
         scrollInfo: await getScrollInfo(),
         xpaths: response.xpaths,
       };
@@ -98,6 +99,7 @@ export async function removeHighlights(): Promise<void> {
     return;
   }
 
+  console.log('Removing highlights...');
   const response = await chrome.tabs.sendMessage(activeTab.id, { type: 'REMOVE_HIGHLIGHTS' });
 
   if (!response?.success) {
@@ -115,17 +117,8 @@ export async function captureScreenshot(): Promise<string | undefined> {
   }
 
   try {
-    const dataUrl = await new Promise<string>((resolve, reject) => {
-      chrome.tabs.captureVisibleTab(activeTab.windowId, { format: 'png' }, result => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message));
-        } else {
-          console.log('Captured screenshot');
-          resolve(result);
-        }
-      });
-    });
-
+    const dataUrl = await chrome.tabs.captureVisibleTab(activeTab.windowId, { format: 'png' });
+    console.log('Captured screenshot');
     return dataUrl;
   } catch (error) {
     console.error('Error capturing screenshot:', error);
