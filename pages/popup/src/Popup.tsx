@@ -53,17 +53,20 @@ const Popup = () => {
     <div className="App">
       <header className="App-header">
         <div className="flex flex-col gap-2 w-full max-w-md p-4">
+          <a href="https://github.com/MisterCommand/web-pilot" target="_blank" rel="noopener noreferrer">
+            <img alt="Static Badge" src="https://img.shields.io/badge/GitHub-Web_Pilot-blue?logo=github" width="128" />
+          </a>
           <div className="flex flex-col gap-2">
-            <label htmlFor="apiKey" className="text-sm font-medium text-left">
-              API Key
+            <label htmlFor="baseUrl" className="text-sm font-medium text-left">
+              Base URL
             </label>
             <input
-              id="apiKey"
-              type="password"
-              value={formState.apiKey}
-              onChange={handleInputChange('apiKey')}
+              id="baseUrl"
+              type="text"
+              value={formState.baseUrl}
+              onChange={handleInputChange('baseUrl')}
               className="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter API Key"
+              placeholder="Enter Base URL"
             />
           </div>
 
@@ -82,16 +85,16 @@ const Popup = () => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="baseUrl" className="text-sm font-medium text-left">
-              Base URL
+            <label htmlFor="apiKey" className="text-sm font-medium text-left">
+              API Key
             </label>
             <input
-              id="baseUrl"
-              type="text"
-              value={formState.baseUrl}
-              onChange={handleInputChange('baseUrl')}
+              id="apiKey"
+              type="password"
+              value={formState.apiKey}
+              onChange={handleInputChange('apiKey')}
               className="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter Base URL"
+              placeholder="Enter API Key"
             />
           </div>
 
