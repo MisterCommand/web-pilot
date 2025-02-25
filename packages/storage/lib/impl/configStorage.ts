@@ -6,18 +6,21 @@ interface Config {
   apiKey: string;
   modelId: string;
   baseUrl: string;
+  maxRounds: number;
 }
 
 const defaultConfig: Config = {
   apiKey: '',
   modelId: '',
   baseUrl: '',
+  maxRounds: 10,
 };
 
 type ConfigStorage = BaseStorage<Config> & {
   updateApiKey: (apiKey: string) => Promise<void>;
   updateModelId: (modelId: string) => Promise<void>;
   updateBaseUrl: (baseUrl: string) => Promise<void>;
+  updateMaxRounds: (maxRounds: number) => Promise<void>;
   reset: () => Promise<void>;
 };
 
@@ -47,7 +50,16 @@ export const configStorage: ConfigStorage = {
       baseUrl,
     }));
   },
-  reset: async () => {
+  updateMaxRounds: async (maxRounds: number) => {
+    if (maxRounds <= 0) {
+      throw new Error('maxRounds must be a positive number');
+    }
+    await storage.set(current => ({
+      ...current,
+      maxRounds,
+    }));
+  },
+  async reset() {
     await storage.set(defaultConfig);
   },
 };

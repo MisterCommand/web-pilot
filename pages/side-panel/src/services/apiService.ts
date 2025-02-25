@@ -1,3 +1,7 @@
+/**
+ * Send a chat completion request to the API.
+ */
+
 import { configStorage } from '@extension/storage';
 
 interface ChatMessage {
@@ -24,5 +28,5 @@ export async function sendChatCompletion(messages: ChatMessage[]) {
     throw new Error(`API request failed with status ${response.status}`);
   }
 
-  return response.json();
+  return response;
 }

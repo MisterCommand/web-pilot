@@ -11,6 +11,7 @@ const Popup = () => {
     apiKey: '',
     modelId: '',
     baseUrl: '',
+    maxRounds: 10,
   });
 
   // Initialize form state from config
@@ -19,6 +20,7 @@ const Popup = () => {
       apiKey: config.apiKey,
       modelId: config.modelId,
       baseUrl: config.baseUrl,
+      maxRounds: config.maxRounds,
     });
   }, [config]);
 
@@ -38,6 +40,7 @@ const Popup = () => {
     await configStorage.updateApiKey(formState.apiKey);
     await configStorage.updateModelId(formState.modelId);
     await configStorage.updateBaseUrl(formState.baseUrl);
+    await configStorage.updateMaxRounds(formState.maxRounds);
     // Could add a success notification here
   }, [formState]);
 
@@ -89,6 +92,25 @@ const Popup = () => {
               onChange={handleInputChange('baseUrl')}
               className="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter Base URL"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="maxRounds" className="text-sm font-medium text-left">
+              Max Rounds
+            </label>
+            <input
+              type="number"
+              id="maxRounds"
+              min="1"
+              value={formState.maxRounds}
+              onChange={e => {
+                const value = parseInt(e.target.value);
+                if (value > 0) {
+                  setFormState(prev => ({ ...prev, maxRounds: value }));
+                }
+              }}
+              className="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 

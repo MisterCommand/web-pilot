@@ -54,26 +54,31 @@ interface HumanPromptResponse {
 async function getChatResponseInternal(
   message: string,
   attempt: number = 1,
-  maxAttempts: number = 10,
+  maxAttempts?: number,
   previousActionResults: ActionResponse[] = [],
 ): Promise<ChatResponse> {
-  if (attempt > maxAttempts) {
+  if (attempt > (maxAttempts ?? 10)) {
     emitChatUpdate({
       role: 'assistant',
-      content: `❌ Failed to complete task after ${maxAttempts} attempts`,
+      content: `❌ Failed to complete task after ${maxAttempts ?? 10} attempts`,
       timestamp: Date.now(),
     });
     return {
-      content: `❌ Failed to complete task after ${maxAttempts} attempts`,
+      content: `❌ Failed to complete task after ${maxAttempts ?? 10} attempts`,
     };
   }
 
-  const config = await configStorage.get();
-  if (!config.apiKey) {
-    throw new Error('API key not configured. Please set your API key in the extension popup.');
-  }
-
   try {
+    if (!maxAttempts) {
+      const config = await configStorage.get();
+      maxAttempts = config.maxRounds;
+    }
+
+    const config = await configStorage.get();
+    if (!config.apiKey) {
+      throw new Error('API key not configured. Please set your API key in the extension popup.');
+    }
+
     emitChatUpdate({
       role: 'assistant',
       content: `📰 Collecting browser context...`,
@@ -209,7 +214,7 @@ async function getChatResponseInternal(
 
 // Main entry point that starts with attempt 1
 export async function getChatResponse(message: string): Promise<ChatResponse> {
-  return getChatResponseInternal(message, 1, 10);
+  return getChatResponseInternal(message, 1);
 }
 
 // Get system prompt with action descriptions
