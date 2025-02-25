@@ -98,7 +98,6 @@ export async function removeHighlights(): Promise<void> {
     return;
   }
 
-  console.log('Sending message to remove highlights');
   const response = await chrome.tabs.sendMessage(activeTab.id, { type: 'REMOVE_HIGHLIGHTS' });
 
   if (!response?.success) {
