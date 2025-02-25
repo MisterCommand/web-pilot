@@ -1,4 +1,4 @@
-/** eslint-disable */
+/* eslint-disable */
 import { configStorage } from '@extension/storage';
 
 class DebugLogger {
