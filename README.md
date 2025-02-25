@@ -41,7 +41,16 @@ Gemini: https://generativelanguage.googleapis.com/v1beta/openai/
 ## Demo
 ![demo-mac](https://github.com/user-attachments/assets/5d7e8fb9-515f-4fd6-ae87-6cf8008a3f35)
 
+## Limitations
+This project is current in the "proof-of-concept" stage.
+- Only the active tab is managed.
+- Button text may be obscured by the highlight.
+- `Extract content` action is not implemented.
+
+Hopefully these limitations could be addressed in the near future.
+
 ## Contribution
 This repo uses [chrome-extension-boilerplate-react-vite](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite) as a starting point.
 - Main background logic is in `pages/side-panel` directory.
+- Content scripts are in `pages/content` directory.
 - Content scripts are in `pages/content` directory.
