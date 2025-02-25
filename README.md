@@ -9,7 +9,9 @@
 </div>
 
 🌐 A proof-of-concept Chrome extension that brings AI agents to your browser.
+
 💡 Inspired and built with technologies from [browser-use](https://github.com/browser-use/browser-use).
+
 🤖 Supports AI models with vision capabilities through the OpenAI API.
 
 ## Getting started
