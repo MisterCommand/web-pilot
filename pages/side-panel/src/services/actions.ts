@@ -49,14 +49,15 @@ export const actionSchemas = [
     }),
     example: '{"done": {"text": "Successfully completed the form submission"}}',
   },
-  {
-    action_name: 'switch_tab',
-    description: 'Switch tab',
-    schema: z.object({
-      page_id: z.number(),
-    }),
-    example: '{"switch_tab": {"page_id": 1}}',
-  },
+  // Disabled due to the tab might not have been loaded yet
+  // {
+  //   action_name: 'switch_tab',
+  //   description: 'Switch tab',
+  //   schema: z.object({
+  //     page_id: z.number(),
+  //   }),
+  //   example: '{"switch_tab": {"page_id": 1}}',
+  // },
   {
     action_name: 'open_tab',
     description: 'Open url in new tab',

@@ -75,7 +75,7 @@ async function getChatResponseInternal(
   try {
     emitChatUpdate({
       role: 'assistant',
-      content: `📰 Collecting information...`,
+      content: `📰 Collecting browser context...`,
       timestamp: Date.now(),
     });
 
@@ -207,7 +207,7 @@ async function getChatResponseInternal(
     console.error('Error getting AI response:', error);
     emitChatUpdate({
       role: 'assistant',
-      content: `❌ Error: ${error instanceof Error ? error.message : 'Failed to get AI response'}`,
+      content: `❌ Error: ${error instanceof Error ? error : 'Failed to get AI response'}`,
       timestamp: Date.now(),
     });
     return {

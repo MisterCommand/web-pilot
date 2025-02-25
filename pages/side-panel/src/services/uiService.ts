@@ -25,8 +25,20 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 export async function getPageData(): Promise<any> {
   const activeTab = await getActiveTab();
 
-  if (!activeTab || !activeTab.id) {
-    throw new Error('No active tab found');
+  // If user on new tab, return skip collecting browser context
+  if (!activeTab || activeTab.url === 'chrome://newtab/') {
+    return {
+      title: 'New Tab',
+      url: 'chrome://newtab/',
+      screenshot: undefined,
+      clickableElements: [],
+      tabs: await getTabsInfo(),
+      scrollInfo: {
+        pixelsAbove: 0,
+        pixelsBelow: 0,
+      },
+      xpaths: [],
+    };
   }
 
   const sendMessageAsync = async () => {
@@ -48,8 +60,8 @@ export async function getPageData(): Promise<any> {
       const screenshot = await captureScreenshot();
 
       const data = {
-        title: activeTab.title || '',
-        url: activeTab.url || '',
+        title: activeTab?.title || '',
+        url: activeTab?.url || '',
         screenshot,
         clickableElements: response.clickableElements,
         tabs: await getTabsInfo(),
@@ -66,7 +78,7 @@ export async function getPageData(): Promise<any> {
         console.log(`Retrying in 1 second...`);
         await sleep(1000);
       } else {
-        throw 'Cannot access tab content, please switch to another website in the same tab.';
+        throw new Error('Failed to get page data after 5 attempts, please refresh the page and try again.');
       }
     }
   }
@@ -79,6 +91,11 @@ export async function removeHighlights(): Promise<void> {
   const activeTab = await getActiveTab();
   if (!activeTab?.id) {
     throw new Error('No active tab found');
+  }
+
+  // Only remove highlights if the user is not on a new tab
+  if (activeTab?.url === 'chrome://newtab/') {
+    return;
   }
 
   return new Promise((resolve, reject) => {

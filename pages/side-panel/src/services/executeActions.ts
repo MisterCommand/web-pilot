@@ -5,6 +5,7 @@
 
 import { parseAction } from './actions';
 import type { Action } from './actions';
+import { removeHighlights } from './uiService';
 
 export interface ActionResponse {
   success: boolean;
@@ -26,6 +27,15 @@ async function executeInContentScript(
   tabId: number,
   action: { type: string; params: unknown; xpaths: Record<string, string> },
 ): Promise<ActionResponse> {
+  // Skip executing action in content script if user on new tab
+  const activeTab = await getActiveTab();
+  if (activeTab?.url === 'chrome://newtab/') {
+    return {
+      success: false,
+      error: 'User on new tab, skipping executing action in content script',
+    };
+  }
+
   console.log('Executing action in content script:', action);
   try {
     const response = await chrome.tabs.sendMessage(tabId, {
@@ -97,6 +107,9 @@ async function executeDone(params: { text: string }): Promise<ActionResponse> {
 
 // Main execute function
 export async function executeAction(actionJson: string, xpaths: Record<string, string>): Promise<ActionResponse> {
+  // Before executing actions, remove highlights
+  await removeHighlights();
+
   try {
     // Parse and validate the action
     const action = parseAction(actionJson);
@@ -112,10 +125,6 @@ export async function executeAction(actionJson: string, xpaths: Record<string, s
         return executeSearchGoogle(params);
       case 'go_to_url':
         return executeGoToUrl(params);
-      case 'switch_tab':
-        return executeSwitchTab(params);
-      case 'open_tab':
-        return executeOpenTab(params);
       case 'done':
         return executeDone(params);
       case 'click_element':
