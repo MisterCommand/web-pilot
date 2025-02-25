@@ -1,11 +1,11 @@
 {
   "extensionDescription": {
     "description": "Extension description",
-    "message": "A Chrome extension that browse the web with AI agents."
+    "message": "A Chrome extension that brings AI agents to your browser."
   },
   "extensionName": {
     "description": "Extension name",
-    "message": "web-pilot"
+    "message": "Web Pilot"
   },
   "toggleTheme": {
     "message": "Toggle theme"
