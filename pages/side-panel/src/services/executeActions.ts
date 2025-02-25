@@ -3,6 +3,7 @@
  * And call content script to execute actions on the active tab.
  */
 
+import { debug } from '@extension/shared/lib/debug';
 import { parseAction } from './actions';
 import type { Action } from './actions';
 import { removeHighlights } from './uiService';
@@ -36,7 +37,7 @@ async function executeInContentScript(
     };
   }
 
-  console.log('Executing action in content script:', action);
+  debug.log('Executing action in content script:', action);
   try {
     const response = await chrome.tabs.sendMessage(tabId, {
       type: 'EXECUTE_ACTION',
@@ -44,7 +45,7 @@ async function executeInContentScript(
     });
     return response as ActionResponse;
   } catch (error) {
-    console.error('Error executing in content script:', error);
+    debug.error('Error executing in content script:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to execute action in content script',
@@ -139,7 +140,7 @@ export async function executeAction(actionJson: string, xpaths: Record<string, s
       case 'scroll_to_text':
       case 'get_dropdown_options':
         // These actions are executed in the content script
-        console.log('Executing action in content script:', actionType, params, xpaths);
+        debug.log('Executing action in content script:', actionType, params, xpaths);
         return executeInContentScript(tab.id!, { type: actionType, params, xpaths });
       default:
         return { success: false, error: `Unknown action type: ${actionType}` };

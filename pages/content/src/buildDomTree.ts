@@ -4,6 +4,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-unused-expressions */
+import { debug } from '@extension/shared/lib/debug';
 import { GetDOMTreeArgs } from './types';
 
 export const buildDomTree = (
@@ -689,7 +690,7 @@ export const buildDomTree = (
           // Assign highlight index if element is interactive and visible
           if (isInteractive && isVisible && isTop && isInViewport) {
             nodeData.highlightIndex = highlightIndex++;
-            console.log(`Element ${nodeData.tagName} isVisible:`, isVisible);
+            debug.log(`Element ${nodeData.tagName} isVisible:`, isVisible);
 
             if (doHighlightElements) {
               if (focusHighlightIndex >= 0) {
@@ -703,7 +704,7 @@ export const buildDomTree = (
           }
 
           if (isInteractive) {
-            console.log(`Interactive element found: ${nodeData.tagName}`, {
+            debug.log(`Interactive element found: ${nodeData.tagName}`, {
               attributes: nodeData.attributes,
               isVisible,
               text: node.textContent?.trim(),
@@ -711,7 +712,7 @@ export const buildDomTree = (
           }
 
           if (isInteractive && isVisible && isTop && isInViewport) {
-            console.log(`Assigning highlight index ${nodeData.highlightIndex} to:`, {
+            debug.log(`Assigning highlight index ${nodeData.highlightIndex} to:`, {
               tagName: nodeData.tagName,
               attributes: nodeData.attributes,
               text: node.textContent?.trim(),

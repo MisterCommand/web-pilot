@@ -2,11 +2,12 @@ import { StorageEnum } from '../base/enums.js';
 import { createStorage } from '../base/base.js';
 import type { BaseStorage } from '../base/types.js';
 
-interface Config {
+export interface Config {
   apiKey: string;
   modelId: string;
   baseUrl: string;
   maxRounds: number;
+  debug: boolean;
 }
 
 const defaultConfig: Config = {
@@ -14,6 +15,7 @@ const defaultConfig: Config = {
   modelId: '',
   baseUrl: '',
   maxRounds: 10,
+  debug: false,
 };
 
 type ConfigStorage = BaseStorage<Config> & {
@@ -21,6 +23,7 @@ type ConfigStorage = BaseStorage<Config> & {
   updateModelId: (modelId: string) => Promise<void>;
   updateBaseUrl: (baseUrl: string) => Promise<void>;
   updateMaxRounds: (maxRounds: number) => Promise<void>;
+  updateDebug: (debug: boolean) => Promise<void>;
   reset: () => Promise<void>;
 };
 
@@ -57,6 +60,12 @@ export const configStorage: ConfigStorage = {
     await storage.set(current => ({
       ...current,
       maxRounds,
+    }));
+  },
+  updateDebug: async (debug: boolean) => {
+    await storage.set(current => ({
+      ...current,
+      debug,
     }));
   },
   async reset() {

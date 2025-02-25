@@ -7,6 +7,7 @@
 import { getCurrentHumanPrompt } from './chatService';
 import { type ActionResponse } from './executeActions';
 import { configStorage } from '@extension/storage';
+import { debug } from '@extension/shared/lib/debug';
 
 interface ValidationResponse {
   is_valid: boolean;
@@ -68,7 +69,7 @@ export async function validateTaskCompletion(
 
     const data = await response.json();
     const validationResponse = data.choices[0].message.content;
-    console.log('Validation response:', validationResponse);
+    debug.log('Validation response:', validationResponse);
 
     try {
       // Parse the response as JSON
@@ -77,17 +78,30 @@ export async function validateTaskCompletion(
       ) as ValidationResponse;
       return parsedResponse;
     } catch (parseError) {
-      console.error('Failed to parse validation response:', parseError);
+      debug.error('Failed to parse validation response:', parseError);
       return {
         is_valid: false,
         reason: 'Failed to parse validation response: ' + validationResponse,
       };
     }
   } catch (error) {
-    console.error('Error validating task completion:', error);
+    debug.error('Error validating task completion:', error);
     return {
       is_valid: false,
       reason: error instanceof Error ? error.message : 'Failed to validate task completion',
     };
+  }
+}
+
+export function validateJson(jsonString: string): { success: boolean; error?: string } {
+  try {
+    debug.log('Validating JSON string:', jsonString);
+    JSON.parse(jsonString);
+    debug.log('JSON validation successful');
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Invalid JSON';
+    debug.error('JSON validation failed:', errorMessage);
+    return { success: false, error: errorMessage };
   }
 }

@@ -12,6 +12,7 @@ const Popup = () => {
     modelId: '',
     baseUrl: '',
     maxRounds: 10,
+    debug: false,
   });
 
   // Initialize form state from config
@@ -21,6 +22,7 @@ const Popup = () => {
       modelId: config.modelId,
       baseUrl: config.baseUrl,
       maxRounds: config.maxRounds,
+      debug: config.debug,
     });
   }, [config]);
 
@@ -41,6 +43,7 @@ const Popup = () => {
     await configStorage.updateModelId(formState.modelId);
     await configStorage.updateBaseUrl(formState.baseUrl);
     await configStorage.updateMaxRounds(formState.maxRounds);
+    await configStorage.updateDebug(formState.debug);
     // Could add a success notification here
   }, [formState]);
 
@@ -115,6 +118,19 @@ const Popup = () => {
               }}
               className="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="debug"
+              checked={formState.debug}
+              onChange={e => setFormState(prev => ({ ...prev, debug: e.target.checked }))}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label htmlFor="debug" className="text-sm font-medium">
+              Enable Debug Mode (restart required)
+            </label>
           </div>
 
           <div className="flex flex-row gap-2 w-full">

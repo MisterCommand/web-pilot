@@ -2,6 +2,8 @@
  * Execute actions on the webpage when called by the background scripts.
  */
 
+import { debug } from '@extension/shared/lib/debug';
+
 export interface ActionResponse {
   success: boolean;
   message?: string;
@@ -39,7 +41,7 @@ export async function executeClickElement(params: {
 }): Promise<ActionResponse> {
   try {
     const element = await findElement(params.index, params.xpaths);
-    console.log('Executing click element action:', element);
+    debug.log('Executing click element action:', element);
     if (!element) {
       return { success: false, error: 'Element not found' };
     }
@@ -81,6 +83,7 @@ export async function executeInputText(params: {
 export async function executeScroll(params: { amount?: number }): Promise<ActionResponse> {
   try {
     const amount = params.amount || window.innerHeight;
+    debug.log(`Scrolling by ${amount} pixels`);
     window.scrollBy({
       top: amount,
       behavior: 'smooth',
@@ -211,7 +214,7 @@ type ActionParams =
 export async function executeAction(
   action: ActionParams & { xpaths?: Record<string, string> },
 ): Promise<ActionResponse> {
-  console.log('Executing action:', action.type, action.params, action.xpaths);
+  debug.log('Executing action:', action.type, action.params, action.xpaths);
   try {
     switch (action.type) {
       case 'click_element':
@@ -235,7 +238,7 @@ export async function executeAction(
         };
     }
   } catch (error) {
-    console.error('Error executing action:', error);
+    debug.error('Error executing action:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',

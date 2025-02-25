@@ -15,6 +15,7 @@ import { getAllActionDescriptions } from './actions';
 import { getSystemPrompt, getHumanPrompt, type BrowserState, getUltimateGoal } from './prompts';
 import { getPageData } from './uiService';
 import { sendChatCompletion } from './apiService';
+import { debug } from '@extension/shared/lib/debug';
 
 // Event emitter for chat updates
 type ChatUpdateListener = (update: Message) => void;
@@ -54,7 +55,7 @@ interface HumanPromptResponse {
 async function getChatResponseInternal(
   message: string,
   attempt: number = 1,
-  maxAttempts?: number,
+  maxAttempts: number,
   previousActionResults: ActionResponse[] = [],
 ): Promise<ChatResponse> {
   if (attempt > (maxAttempts ?? 10)) {
@@ -69,11 +70,6 @@ async function getChatResponseInternal(
   }
 
   try {
-    if (!maxAttempts) {
-      const config = await configStorage.get();
-      maxAttempts = config.maxRounds;
-    }
-
     const config = await configStorage.get();
     if (!config.apiKey) {
       throw new Error('API key not configured. Please set your API key in the extension popup.');
@@ -85,12 +81,13 @@ async function getChatResponseInternal(
       timestamp: Date.now(),
     });
 
-    // Get system prompt with action descriptions
-    const systemPrompt = getInitialSystemPrompt();
-
-    // Get human prompt with current browser state
+    debug.log('Getting human prompt...');
     const humanPromptResponse = await getCurrentHumanPrompt(previousActionResults);
 
+    debug.log('Getting system prompt...');
+    const systemPrompt = getInitialSystemPrompt();
+
+    debug.log('Preparing messages for chat completion...');
     const messages = [
       {
         role: 'system',
@@ -105,21 +102,31 @@ async function getChatResponseInternal(
       },
     ];
 
+    debug.log('Sending chat completion request...');
     const response = await sendChatCompletion(messages);
 
     if (!response.ok) {
+      debug.error('Chat completion request failed:', response.status);
       const error = await response.json();
+      debug.error('Error details:', error);
       throw new Error(error.error?.message || 'Failed to get AI response');
     }
 
-    const data = await response.json();
-    const aiResponse = data.choices[0].message.content;
-    console.log('AI Response:', aiResponse);
+    debug.log('Processing chat completion response...');
+    const responseData = await response.json();
+    const aiResponse = responseData.choices[0]?.message?.content;
+
+    if (!aiResponse) {
+      debug.error('No response content from AI');
+      throw new Error('No response content from AI');
+    }
+
+    debug.log('AI Response:', aiResponse);
 
     try {
       // Try to parse the response as a structured JSON
       const parsedResponse = JSON.parse(aiResponse.replace(/^```json\n/, '').replace(/```$/, '')) as AIResponse;
-      console.log('Parsed Response:', parsedResponse);
+      debug.log('Parsed Response:', parsedResponse);
 
       // Execute each action in sequence
       const actionResults: ActionResponse[] = previousActionResults;
@@ -139,7 +146,7 @@ async function getChatResponseInternal(
       }
       for (const action of actions) {
         // Emit action start message
-        console.log('Executing action:', action);
+        debug.log('Executing action:', action);
         const actionJson = JSON.stringify(action);
         const actionObj = JSON.parse(actionJson) as Record<string, { text?: string }>;
         const actionName = Object.keys(actionObj)[0];
@@ -177,9 +184,9 @@ async function getChatResponseInternal(
 
         // Emit action result
         if (!result.success) {
-          console.log('❌ Action failed:', result.error);
+          debug.log('❌ Action failed:', result.error);
         } else {
-          console.log('✅ Action successful:', result.message);
+          debug.log('✅ Action successful:', result.message);
         }
         actionResults.push(result);
       }
@@ -199,28 +206,37 @@ async function getChatResponseInternal(
       };
     }
   } catch (error) {
-    console.error('Error getting AI response:', error);
+    debug.error('Error in chat response:', error);
+
+    if (attempt < maxAttempts) {
+      debug.log(`Retrying (attempt ${attempt + 1}/${maxAttempts})...`);
+      return getChatResponseInternal(message, attempt + 1, maxAttempts);
+    }
+
     emitChatUpdate({
       role: 'assistant',
-      content: `❌ Error: ${error instanceof Error ? error : 'Failed to get AI response'}`,
+      content: `❌ ${error instanceof Error ? error.message : 'An unknown error occurred'}`,
       timestamp: Date.now(),
     });
+
     return {
-      content: '',
-      error: error instanceof Error ? error.message : 'Failed to get AI response',
+      content: error instanceof Error ? error.message : 'An unknown error occurred',
     };
   }
 }
 
 // Main entry point that starts with attempt 1
 export async function getChatResponse(message: string): Promise<ChatResponse> {
-  return getChatResponseInternal(message, 1);
+  const config = await configStorage.get();
+  const maxAttempts = config.maxRounds ?? 20;
+  debug.log('Using maxRounds from config:', maxAttempts);
+  return getChatResponseInternal(message, 1, maxAttempts);
 }
 
 // Get system prompt with action descriptions
 export function getInitialSystemPrompt(): string {
   const actionDescription = getAllActionDescriptions();
-  // console.log('System prompt:', getSystemPrompt(actionDescription).content);
+  // debug.log('System prompt:', getSystemPrompt(actionDescription).content);
   return getSystemPrompt(actionDescription).content;
 }
 
@@ -231,7 +247,7 @@ export async function getCurrentHumanPrompt(
   useVision: boolean = true,
 ): Promise<HumanPromptResponse> {
   const pageData = await getPageData();
-  console.log('Page data:', pageData);
+  debug.log('Page data:', pageData);
 
   const browserState: BrowserState = {
     url: pageData.url,
@@ -246,7 +262,7 @@ export async function getCurrentHumanPrompt(
 
   // await removeHighlights(); // Remove highlights after capturing the screenshot
 
-  console.log('Human prompt:', getHumanPrompt(browserState, actionResults, [], stepInfo, useVision).content);
+  debug.log('Human prompt:', getHumanPrompt(browserState, actionResults, [], stepInfo, useVision).content);
 
   return {
     prompt: getHumanPrompt(browserState, actionResults, [], stepInfo, useVision).content,

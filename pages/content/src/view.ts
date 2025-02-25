@@ -3,6 +3,8 @@
  * https://github.com/browser-use/browser-use/blob/main/browser_use/dom/views.py
  */
 
+import { debug } from '@extension/shared/lib/debug';
+
 // Types from external dependencies
 interface CoordinateSet {
   topLeft: { x: number; y: number };
@@ -133,14 +135,14 @@ export class DOMElementNode extends DOMBaseNode {
         if (node.isVisible) {
           const trimmedText = node.text.trim();
           if (trimmedText) {
-            console.log('Adding text node:', trimmedText);
+            debug.log('Adding text node:', trimmedText);
             textParts.push(trimmedText);
           }
         }
       } else if (node instanceof DOMElementNode) {
         // Stop at the next clickable element
         if (node !== this && node.highlightIndex !== null) {
-          console.log('Stopping at clickable element:', {
+          debug.log('Stopping at clickable element:', {
             tagName: node.tagName,
             highlightIndex: node.highlightIndex,
             text: node.children
@@ -160,7 +162,7 @@ export class DOMElementNode extends DOMBaseNode {
 
     collectText(this, currentDepth);
     const result = textParts.join(' ');
-    console.log('Final text for element:', {
+    debug.log('Final text for element:', {
       tagName: this.tagName,
       highlightIndex: this.highlightIndex,
       text: result,
@@ -187,7 +189,7 @@ export class DOMElementNode extends DOMBaseNode {
 
           // Get text content
           const textContent = node.getAllTextTillNextClickableElement();
-          console.log('Processing clickable element:', {
+          debug.log('Processing clickable element:', {
             tagName: node.tagName,
             highlightIndex: node.highlightIndex,
             textContent,
@@ -211,7 +213,7 @@ export class DOMElementNode extends DOMBaseNode {
       } else if (node instanceof DOMTextNode) {
         // Add text only if it doesn't have a highlighted parent and is visible
         if (!node.hasParentWithHighlightIndex() && node.isVisible && node.text.trim()) {
-          console.log('Adding standalone text node:', {
+          debug.log('Adding standalone text node:', {
             text: node.text.trim(),
             isVisible: node.isVisible,
             hasParentWithHighlight: node.hasParentWithHighlightIndex(),
@@ -222,7 +224,7 @@ export class DOMElementNode extends DOMBaseNode {
     };
 
     processNode(this, 0);
-    console.log('Final formatted text:', formattedText);
+    debug.log('Final formatted text:', formattedText);
     return formattedText.join('\n');
   }
 

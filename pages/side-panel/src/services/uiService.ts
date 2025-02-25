@@ -7,6 +7,8 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { debug } from '@extension/shared/lib/debug';
+
 // TabInfo interface definition
 interface TabInfo {
   pageId: number;
@@ -69,14 +71,14 @@ export async function getPageData(): Promise<any> {
         scrollInfo: await getScrollInfo(),
         xpaths: response.xpaths,
       };
-      console.log('Received response:', response);
+      debug.log('Received response:', response);
 
       return data;
     } catch (error) {
       lastError = error as Error;
-      console.error(`Error getting page data (attempt ${attempt}/5):`, error);
+      debug.error(`Error getting page data (attempt ${attempt}/5):`, error);
       if (attempt < 5) {
-        console.log(`Retrying in 1 second...`);
+        debug.log(`Retrying in 1 second...`);
         await sleep(1000);
       } else {
         throw new Error('Failed to get page data after 5 attempts, please refresh the page and try again.');
@@ -99,10 +101,11 @@ export async function removeHighlights(): Promise<void> {
     return;
   }
 
-  console.log('Removing highlights...');
+  debug.log('Removing highlights...');
   const response = await chrome.tabs.sendMessage(activeTab.id, { type: 'REMOVE_HIGHLIGHTS' });
 
   if (!response?.success) {
+    debug.error('Failed to remove highlights');
     throw new Error('Failed to remove highlights');
   }
 }
@@ -118,10 +121,10 @@ export async function captureScreenshot(): Promise<string | undefined> {
 
   try {
     const dataUrl = await chrome.tabs.captureVisibleTab(activeTab.windowId, { format: 'png' });
-    console.log('Captured screenshot');
+    debug.log('Captured screenshot');
     return dataUrl;
   } catch (error) {
-    console.error('Error capturing screenshot:', error);
+    debug.error('Error capturing screenshot:', error);
   }
 }
 
