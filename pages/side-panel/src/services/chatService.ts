@@ -14,6 +14,7 @@ import { type ActionResponse, executeAction } from './executeActions';
 import { getAllActionDescriptions } from './actions';
 import { getSystemPrompt, getHumanPrompt, type BrowserState, getUltimateGoal } from './prompts';
 import { getPageData, removeHighlights } from './uiService';
+import { sendChatCompletion } from './apiService';
 
 // Event emitter for chat updates
 type ChatUpdateListener = (update: Message) => void;
@@ -99,18 +100,7 @@ async function getChatResponseInternal(
       },
     ];
 
-    const response = await fetch(`${config.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: config.modelId,
-        messages,
-        temperature: 0.7,
-      }),
-    });
+    const response = await sendChatCompletion(messages);
 
     if (!response.ok) {
       const error = await response.json();
