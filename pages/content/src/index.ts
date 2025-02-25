@@ -218,6 +218,7 @@ function getScrollInfo() {
 
 // Function to remove all highlights
 function removeHighlights() {
+  console.log('Removing highlights');
   const highlightedElement = document.getElementById('playwright-highlight-container');
   if (highlightedElement) {
     highlightedElement.remove();

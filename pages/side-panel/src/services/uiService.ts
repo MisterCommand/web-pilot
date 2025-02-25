@@ -60,8 +60,8 @@ export async function getPageData(): Promise<any> {
       const screenshot = await captureScreenshot();
 
       const data = {
-        title: activeTab?.title || '',
-        url: activeTab?.url || '',
+        title: response.title || '',
+        url: response.url || '',
         screenshot,
         clickableElements: response.clickableElements,
         tabs: await getTabsInfo(),
@@ -98,17 +98,12 @@ export async function removeHighlights(): Promise<void> {
     return;
   }
 
-  return new Promise((resolve, reject) => {
-    chrome.tabs.sendMessage(activeTab.id!, { type: 'REMOVE_HIGHLIGHTS' }, response => {
-      if (chrome.runtime.lastError) {
-        reject(new Error(chrome.runtime.lastError.message));
-      } else if (!response?.success) {
-        reject(new Error('Failed to remove highlights'));
-      } else {
-        resolve();
-      }
-    });
-  });
+  console.log('Sending message to remove highlights');
+  const response = await chrome.tabs.sendMessage(activeTab.id, { type: 'REMOVE_HIGHLIGHTS' });
+
+  if (!response?.success) {
+    throw new Error('Failed to remove highlights');
+  }
 }
 
 // Function to capture screenshot
@@ -126,6 +121,7 @@ export async function captureScreenshot(): Promise<string | undefined> {
         if (chrome.runtime.lastError) {
           reject(new Error(chrome.runtime.lastError.message));
         } else {
+          console.log('Captured screenshot');
           resolve(result);
         }
       });
@@ -135,28 +131,6 @@ export async function captureScreenshot(): Promise<string | undefined> {
   } catch (error) {
     console.error('Error capturing screenshot:', error);
   }
-}
-
-// Function to save screenshot
-export async function saveScreenshot(dataUrl: string, filename?: string): Promise<string> {
-  const defaultFilename = `screenshot-${new Date().toISOString().replace(/[:.]/g, '-')}.png`;
-
-  return new Promise((resolve, reject) => {
-    chrome.downloads.download(
-      {
-        url: dataUrl,
-        filename: filename || defaultFilename,
-        saveAs: false,
-      },
-      downloadId => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message));
-        } else {
-          resolve(downloadId.toString());
-        }
-      },
-    );
-  });
 }
 
 // Function to get active tab
