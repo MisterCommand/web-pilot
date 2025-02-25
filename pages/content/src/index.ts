@@ -8,6 +8,8 @@ import { DOMElementNode, DOMTextNode } from './view';
 import { executeAction } from './executeAction';
 import type { DOMNode } from './types';
 
+console.log('Web Pilot content script loaded'); // For testing
+
 // Convert DOMNode to DOMElementNode/DOMTextNode
 function convertToDOMNode(
   nodeId: string,

@@ -9,7 +9,7 @@ describe('Webextension Content Script', () => {
 
     await browser.url('https://www.example.com');
 
-    const EXPECTED_LOG_MESSAGE = 'content script loaded';
+    const EXPECTED_LOG_MESSAGE = 'Web Pilot content script loaded';
     await browser.waitUntil(() => logs.includes(EXPECTED_LOG_MESSAGE));
 
     expect(logs).toContain(EXPECTED_LOG_MESSAGE);
