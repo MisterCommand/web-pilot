@@ -125,6 +125,10 @@ export async function executeAction(actionJson: string, xpaths: Record<string, s
         return executeSearchGoogle(params);
       case 'go_to_url':
         return executeGoToUrl(params);
+      case 'switch_tab':
+        return executeSwitchTab(params);
+      case 'open_tab':
+        return executeOpenTab(params);
       case 'done':
         return executeDone(params);
       case 'click_element':
