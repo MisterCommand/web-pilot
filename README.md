@@ -42,6 +42,6 @@ Gemini: https://generativelanguage.googleapis.com/v1beta/openai/
 ![demo-mac](https://github.com/user-attachments/assets/5d7e8fb9-515f-4fd6-ae87-6cf8008a3f35)
 
 ## Contribution
-This repo uses chrome-extension-boilerplate-react-vite as a starting point.
+This repo uses [chrome-extension-boilerplate-react-vite](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite) as a starting point.
 - Main background logic is in `pages/side-panel` directory.
 - Content scripts are in `pages/content` directory.
