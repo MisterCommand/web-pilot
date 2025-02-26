@@ -17,7 +17,7 @@
 ## Getting started
 
 ### Installation
-1. Download extension zip and unzip.
+1. [Download](https://github.com/MisterCommand/web-pilot/releases) extension zip and unzip.
 2. Open in browser - `chrome://extensions`.
 3. Check - <kbd>Developer mode</kbd>.
 4. Click - <kbd>Load unpacked</kbd> in the upper left corner.
